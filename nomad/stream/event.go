@@ -12,3 +12,8 @@ type Event struct {
 	Index   uint64
 	Payload interface{}
 }
+
+type Entry struct {
+	Index  uint64
+	Events []Event
+}
