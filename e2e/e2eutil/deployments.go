@@ -36,3 +36,20 @@ func WaitForLastDeploymentStatus(jobID, status string, wc *WaitConfig) error {
 	})
 	return err
 }
+
+func LastDeploymentID(jobID string) (string, error) {
+	out, err := Command("nomad", "deployment", "list")
+	if err != nil {
+		return "", fmt.Errorf("could not get deployment list: %v\n%v", err, out)
+	}
+	rows, err := ParseColumns(out)
+	if err != nil {
+		return "", fmt.Errorf("could not parse deployment list output: %w", err)
+	}
+	for _, row := range rows {
+		if row["Job ID"] == jobID {
+			return row["ID"], nil
+		}
+	}
+	return "", fmt.Errorf("could not find a recent deployment for job")
+}
