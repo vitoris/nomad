@@ -97,6 +97,9 @@ func (s *HTTPServer) EventStream(resp http.ResponseWriter, req *http.Request) (i
 			// Decode the response
 			var res structs.EventStreamWrapper
 			if err := decoder.Decode(&res); err != nil {
+				if err == io.EOF || err == io.ErrClosedPipe {
+					return
+				}
 				errCh <- CodedError(500, err.Error())
 				return
 			}
@@ -122,11 +125,13 @@ func (s *HTTPServer) EventStream(resp http.ResponseWriter, req *http.Request) (i
 	cancel()
 	codedErr := <-errCh
 
-	if codedErr != nil {
-		return nil, codedErr
+	if codedErr != nil &&
+		(codedErr == io.EOF ||
+			strings.Contains(codedErr.Error(), io.ErrClosedPipe.Error())) {
+		codedErr = nil
 	}
 
-	return nil, nil
+	return nil, codedErr
 }
 
 func parseEventTopics(query url.Values) (map[stream.Topic][]string, error) {

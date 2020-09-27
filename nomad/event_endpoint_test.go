@@ -161,7 +161,7 @@ func TestEventStream_StreamErr(t *testing.T) {
 	// stop the publisher to force an error on subscription side
 	s1.State().StopEventPublisher()
 
-	timeout := time.After(1 * time.Second)
+	timeout := time.After(3 * time.Second)
 OUTER:
 	for {
 		select {

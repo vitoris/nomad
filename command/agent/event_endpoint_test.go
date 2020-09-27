@@ -42,7 +42,7 @@ func TestEventStream(t *testing.T) {
 				return true, nil
 			}
 
-			return false, fmt.Errorf("missing expected frame, got: %v, want: %v", got, want)
+			return false, fmt.Errorf("missing expected json, got: %v, want: %v", got, want)
 		}, func(err error) {
 			require.Fail(t, err.Error())
 		})

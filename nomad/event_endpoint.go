@@ -79,6 +79,7 @@ func (e *Event) stream(conn io.ReadWriteCloser) {
 		handleJsonResultError(err, helper.Int64ToPtr(500), encoder)
 		return
 	}
+	defer subscription.Unsubscribe()
 
 	ndJsonCh := make(chan *stream.NDJson)
 	errCh := make(chan error)
